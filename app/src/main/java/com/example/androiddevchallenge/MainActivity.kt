@@ -15,15 +15,32 @@
  */
 package com.example.androiddevchallenge
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material.Card
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import com.example.androiddevchallenge.data.Cat
+import com.example.androiddevchallenge.data.KittensData
 import com.example.androiddevchallenge.ui.theme.MyTheme
+import com.example.androiddevchallenge.ui.theme.composable.KittensUi
+import com.example.androiddevchallenge.ui.theme.screen.DetailActivity
+import com.example.androiddevchallenge.ui.theme.typography
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -38,9 +55,26 @@ class MainActivity : AppCompatActivity() {
 
 // Start building your app here!
 @Composable
-fun MyApp() {
-    Surface(color = MaterialTheme.colors.background) {
-        Text(text = "Ready... Set... GO!")
+fun MyApp(kittens: List<Cat> = KittensData.KittensList) {
+    val context = LocalContext.current
+    Surface(
+        color = Color.Gray
+    ) {
+        LazyColumn {
+            item {
+                MyHeader()
+                kittens.forEach {
+                    KittensUi(
+                        it
+                    ) {
+                        val intent = Intent(context, DetailActivity::class.java)
+                        intent.putExtra("cat", it)
+                        context.startActivity(intent)
+                    }
+                }
+            }
+
+        }
     }
 }
 
@@ -57,5 +91,36 @@ fun LightPreview() {
 fun DarkPreview() {
     MyTheme(darkTheme = true) {
         MyApp()
+    }
+}
+
+@Composable
+fun MyHeader() {
+    Card(
+        elevation = 4.dp,
+        backgroundColor = MaterialTheme.colors.background,
+        modifier = Modifier
+            .padding(16.dp)
+            .fillMaxWidth()
+    ) {
+        Column(
+            modifier = Modifier.padding(16.dp)
+        ) {
+            Text(
+                text = "Hello Kittens Lover",
+                style = typography.h4
+            )
+            Text(
+                text = "They are adorable things and you can never say no to them. " +
+                        "They are very funny and you can spend hours watching them."
+            )
+            Text(
+                text = "Stop Watching! Take action and adopt a Kitten! Now!!",
+                style = typography.h6,
+                textAlign = TextAlign.Center,
+                fontStyle = FontStyle.Italic,
+                modifier = Modifier.padding(8.dp)
+            )
+        }
     }
 }
